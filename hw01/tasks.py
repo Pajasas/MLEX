@@ -76,7 +76,7 @@ class Complex():
 		return Complex(self.a, -self.b)
 
 	def __eq__(self, other):
-		return (isinstance(other, self.__class__)
+		return (type(other) is type(self)
 			and self.__dict__ == other.__dict__)
 
 class TestAll(unittest.TestCase):
