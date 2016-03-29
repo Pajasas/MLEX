@@ -6,7 +6,7 @@
 # Účastníci seminářů MFF UK, propagačních akcí, olympiád, soutěží...
 # Nástup na MFF 2007-2015
 
-# In[3]:
+# In[1]:
 
 import re
 import pandas as pd
@@ -28,7 +28,7 @@ from __future__ import division
 # - school-XXX - 1 pokud student studoval na škole typu XXX - G_Y jsou Y-letá gymnázia
 # - AKCE-ROK-SLOUPEC - Účast na akci AKCE v roce ROK. Sloupce jsou attended [0/1], rank a maxrank. Rank je pořadí z celkového počtu (maxrank).
 
-# In[4]:
+# In[2]:
 
 dataset_diff= pd.read_csv('dataset_diff.csv', low_memory=False, index_col=False)
 dataset_absolute= pd.read_csv('dataset_absolute.csv', low_memory=False, index_col=False)
@@ -58,7 +58,7 @@ dataset_diff
 # 
 # Sloupce featur je možné si prohlédnout např v datasests['diff']['features'] zobrazeným pod následujícím kódem:
 
-# In[6]:
+# In[3]:
 
 def event_2_class(event):
     e = event.split('_')
@@ -164,7 +164,7 @@ datasets['diff']['features']
 # - test - studenti co odmaturovali v roce 2015
 # - future - studenti co si myslíme že budou maturovat v roce 2016
 
-# In[62]:
+# In[4]:
 
 def split_(df):
     return df[df['student_until']<2015], df[df['student_until']==2015],df[df['student_until']>2015],
@@ -173,9 +173,10 @@ for key, value in datasets.iteritems():
     value['train'], value['test'], value['future'] = split_(value['data'])
 
 
-# In[23]:
+# In[10]:
 
-for key, (data, features, targets) in datasets.iteritems():
+for key, value in datasets.iteritems():
+    (data, features, targets) = value['data'], value['features'], value['targets']
     for t in targets:
         print "Testing baseline with target "+t+" for dataset " + key
         y = data[t]>0#nekteri lide se prihlasili/byli prijati vicekrat
@@ -191,7 +192,7 @@ for key, (data, features, targets) in datasets.iteritems():
         print
 
 
-# In[72]:
+# In[11]:
 
 def my_f(corr, pred):
     success = pred ==corr
@@ -223,11 +224,12 @@ def my_f(corr, pred):
 # - jaké featury jsou vhodné?
 # - možnost predikce lidi co budou maturovat letos, minimálně co se týče přihlášení
 
-# In[75]:
+# In[12]:
 
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 #targets = ['prihlasen', 'prijat']#, 'absolvoval']
 #targets = ['prihlasen', 'prijat']
@@ -259,4 +261,9 @@ for t in targets:
             pred = cls.predict(d_test[fs])
             results[t][key][cls] = my_f(y_test, pred)
             print 
+
+
+# In[18]:
+
+#datasets['diff']['train']
 
